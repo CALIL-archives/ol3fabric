@@ -1,0 +1,15 @@
+<component name="libraryTable">
+  <library name="Generated files" type="javaScript">
+    <properties>
+      <sourceFilesUrls>
+        <item url="file://$PROJECT_DIR$/fabriclayer.js" />
+        <item url="file://$PROJECT_DIR$/sample.js" />
+      </sourceFilesUrls>
+    </properties>
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/fabriclayer.js" />
+      <root url="file://$PROJECT_DIR$/fabric_sample.js" />
+    </CLASSES>
+    <SOURCES />
+  </library>
+</component>
