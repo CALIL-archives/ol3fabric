@@ -1,15 +1,14 @@
 class FabricLayer extends ol.layer.Vector
   map: null
+  geojson: null
   constructor: (options) ->
     super(options)
     @on 'postcompose', @postcompose_, @
     @setSource(new ol.source.Vector())
-
+    @geojson = options.geojson
   postcompose_: (event)->
     if not @map?
       return
-#    console.log event.frameState.focus
-#    console.log ol.proj.transform(event.frameState.focus, 'EPSG:3857', 'EPSG:4326');
     context = event.context
     pixelRatio = event.frameState.pixelRatio
 
@@ -20,17 +19,17 @@ class FabricLayer extends ol.layer.Vector
     r = event.frameState.viewState.rotation
     r2 = @rotation * Math.PI / 180
 
-
+    # initialize fabric
     if not window.canvas?
-      fabricInit(context, @)
+      fabricInit(context, @, oneMeterPx)
 
     # 1px = 1m
 #    canvas.setZoom(oneMeterPx)
-    canvas.zoomToPoint(new fabric.Point(canvas.width/2, canvas.height/2), oneMeterPx)
+#    canvas.zoomToPoint(new fabric.Point(canvas.width/2, canvas.height/2), oneMeterPx)
     canvas.renderAllOnTop()
 
 
-fabricInit = (context, layer)=>
+fabricInit = (context, layer, oneMeterPx)=>
   window.canvas = new fabric.Canvas(context.canvas,
     width: context.canvas.width
     height: context.canvas.height
@@ -92,22 +91,27 @@ fabricInit = (context, layer)=>
 
     return this;
 
-  red = new fabric.Rect({
-    left: canvas.width/2 - 1,
-    top: canvas.height/2,
-    fill: 'red',
-    width: 4,
-    height: 4,
-    angle: 45
-  });
-  blue = new fabric.Rect({
-    left: canvas.width/2 + 1,
-    top: canvas.height/2,
-    fill: 'blue',
-    width: 4,
-    height: 4,
-    angle: 45
-  });
+#  console.log layer.geojson
+#  console.log layer.map.getView()
+#  console.log layer.map.getView().getCenter()
+#  console.log layer.map.getView().getZoom()
 
-  canvas.add(red)
-  canvas.add(blue)
+  for feature in @geojson.features
+#    console.log feature
+#    console.log feature.properties
+    coordinates = feature.geometry.coordinates[0]
+    x1 = layer.map.getPixelFromCoordinate(coordinates[1])[0]
+    y1 = layer.map.getPixelFromCoordinate(coordinates[1])[1]
+    x2 = layer.map.getPixelFromCoordinate(coordinates[3])[0]
+    y2 = layer.map.getPixelFromCoordinate(coordinates[3])[1]
+    width  = x2-x1
+    height = y2-y1
+    object = new fabric.Rect({
+      left: x1+width/2,
+      top : y1+height/2,
+      fill: feature.properties.color,
+      width:  width,
+      height: height,
+      angle: 0
+    });
+    canvas.add(object)

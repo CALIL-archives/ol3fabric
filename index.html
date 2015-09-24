@@ -32,7 +32,6 @@
         extent: [-50, -50, 50, 50]
     });
 
-    var fabriclayer = new FabricLayer();
     // created by geojson.io
     // http://geojson.io/
     var geojson = {
@@ -113,6 +112,9 @@
       ]
     };
     var geojsonlayer = new GeoJSONLayer({
+        'geojson': geojson
+    });
+    var fabriclayer = new FabricLayer({
         'geojson': geojson
     });
     view = new ol.View({

@@ -8,10 +8,13 @@ FabricLayer = (function(superClass) {
 
   FabricLayer.prototype.map = null;
 
+  FabricLayer.prototype.geojson = null;
+
   function FabricLayer(options) {
     FabricLayer.__super__.constructor.call(this, options);
     this.on('postcompose', this.postcompose_, this);
     this.setSource(new ol.source.Vector());
+    this.geojson = options.geojson;
   }
 
   FabricLayer.prototype.postcompose_ = function(event) {
@@ -27,9 +30,8 @@ FabricLayer = (function(superClass) {
     r = event.frameState.viewState.rotation;
     r2 = this.rotation * Math.PI / 180;
     if (window.canvas == null) {
-      fabricInit(context, this);
+      fabricInit(context, this, oneMeterPx);
     }
-    canvas.zoomToPoint(new fabric.Point(canvas.width / 2, canvas.height / 2), oneMeterPx);
     return canvas.renderAllOnTop();
   };
 
@@ -38,8 +40,8 @@ FabricLayer = (function(superClass) {
 })(ol.layer.Vector);
 
 fabricInit = (function(_this) {
-  return function(context, layer) {
-    var blue, red;
+  return function(context, layer, oneMeterPx) {
+    var coordinates, feature, height, i, len, object, ref, results, width, x1, x2, y1, y2;
     window.canvas = new fabric.Canvas(context.canvas, {
       width: context.canvas.width,
       height: context.canvas.height,
@@ -90,24 +92,28 @@ fabricInit = (function(_this) {
       this.fire('after:render');
       return this;
     };
-    red = new fabric.Rect({
-      left: canvas.width / 2 - 1,
-      top: canvas.height / 2,
-      fill: 'red',
-      width: 4,
-      height: 4,
-      angle: 45
-    });
-    blue = new fabric.Rect({
-      left: canvas.width / 2 + 1,
-      top: canvas.height / 2,
-      fill: 'blue',
-      width: 4,
-      height: 4,
-      angle: 45
-    });
-    canvas.add(red);
-    return canvas.add(blue);
+    ref = _this.geojson.features;
+    results = [];
+    for (i = 0, len = ref.length; i < len; i++) {
+      feature = ref[i];
+      coordinates = feature.geometry.coordinates[0];
+      x1 = layer.map.getPixelFromCoordinate(coordinates[1])[0];
+      y1 = layer.map.getPixelFromCoordinate(coordinates[1])[1];
+      x2 = layer.map.getPixelFromCoordinate(coordinates[3])[0];
+      y2 = layer.map.getPixelFromCoordinate(coordinates[3])[1];
+      width = x2 - x1;
+      height = y2 - y1;
+      object = new fabric.Rect({
+        left: x1 + width / 2,
+        top: y1 + height / 2,
+        fill: feature.properties.color,
+        width: width,
+        height: height,
+        angle: 0
+      });
+      results.push(canvas.add(object));
+    }
+    return results;
   };
 })(this);
 

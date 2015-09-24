@@ -10,7 +10,7 @@ class GeoJSONLayer extends ol.layer.Vector
     return new ol.layer.Vector
       source: @createVectorSource()
       style : @styleFunction
-  # translate EPSG:3857 to EPSG:4326
+  # translate EPSG:4326 to EPSG:3857
   translateGeoJSON: ->
     for feature in @geojson.features
       new_coordinates = []
@@ -22,7 +22,6 @@ class GeoJSONLayer extends ol.layer.Vector
       features: (new ol.format.GeoJSON()).readFeatures(@geojson)
   styleFunction: (feature, resolution) ->
 #    @styles[feature.getGeometry().getType()]
-    console.log(feature.getProperties())
     return [
       new ol.style.Style
         stroke: new ol.style.Stroke

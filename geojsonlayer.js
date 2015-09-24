@@ -42,7 +42,6 @@ GeoJSONLayer = (function(superClass) {
   };
 
   GeoJSONLayer.prototype.styleFunction = function(feature, resolution) {
-    console.log(feature.getProperties());
     return [
       new ol.style.Style({
         stroke: new ol.style.Stroke({
