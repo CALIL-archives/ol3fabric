@@ -12,15 +12,45 @@
             margin: 0;
             padding: 0;
         }
+        #control {
+            width: 600px;
+            background-color: rgba(255, 255, 255, 0.6);
+            top: 10px;
+            left: 60px;
+            padding: 20px;
+            position: absolute;
+            z-index: 100;
+        }
+
+        .ol-scale-line {
+            background-color: rgba(255, 255, 255, 0.5);
+            bottom: 30px;
+            border-radius: 2px;
+            padding: 4px;
+        }
+
+        .ol-scale-line-inner {
+            color: #050505;
+            border: 1px solid #565656;
+            border-top: none;
+            margin: 0px;
+        }
     </style>
 </head>
 <body>
+
+<div id="control">
+    Angle<br />
+    <button onclick="setAngle(0);">0°</button>
+    <button onclick="setAngle(90);">90°</button>
+    <button onclick="setAngle(120);">120°</button>
+
+</div>
 
 <div id="map" class="map"></div>
 
 <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/fabric.js/1.5.0/fabric.min.js"></script>
 
-<!--<script type="text/javascript" src="fabric.js"></script>-->
 <script type="text/javascript" src="geojsonlayer.js"></script>
 <script type="text/javascript" src="fabriclayer.js"></script>
 <script type="text/javascript">
@@ -121,7 +151,7 @@
         center: ol.proj.transform([137.528032, 35.573162], 'EPSG:4326', 'EPSG:3857'),
         zoom: 20,
 //        zoom: 2,
-//        rotation: 0
+        rotation: 0
     });
     osm = new ol.layer.Tile({
         source: new ol.source.XYZ({
@@ -155,6 +185,12 @@
     }, this);
     if (dragPan) {
       map.removeInteraction(dragPan);
+    }
+
+    function setAngle(angle){
+      var rotation = angle / 90 * 1.57;
+      view.setRotation(rotation);
+      fabriclayer.setAngle(rotation);
     }
 
 
