@@ -23,9 +23,14 @@ FabricLayer = (function(superClass) {
     this.geojson = options.geojson;
   }
 
-  FabricLayer.prototype.setAngle = function(angle) {
-    this.angle = angle;
+  FabricLayer.prototype.setAngle = function(rotation) {
+    this.angle = this.rotationToAngle(rotation);
+    console.log(this.angle);
     return this.changed();
+  };
+
+  FabricLayer.prototype.rotationToAngle = function(rotation) {
+    return rotation / Math.PI * 180;
   };
 
   FabricLayer.prototype.postcompose_ = function(event) {
@@ -138,10 +143,6 @@ FabricLayer = (function(superClass) {
       results.push(this.canvas.add(object));
     }
     return results;
-  };
-
-  FabricLayer.prototype.rotationToAngle = function(rotation) {
-    return rotation / 1.57 * 90;
   };
 
   return FabricLayer;

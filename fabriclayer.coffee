@@ -9,9 +9,13 @@ class FabricLayer extends ol.layer.Vector
     @on 'postcompose', @postcompose_, @
     @setSource(new ol.source.Vector())
     @geojson = options.geojson
-  setAngle: (angle) ->
-    @angle = angle
+  setAngle: (rotation) ->
+    @angle = @rotationToAngle(rotation)
+    console.log @angle
     @changed()
+  rotationToAngle: (rotation)->
+    # rotation Math.PI == 180 angle
+    return rotation / Math.PI * 180
   postcompose_: (event)->
     if not @map?
       return
@@ -143,7 +147,3 @@ class FabricLayer extends ol.layer.Vector
 #            top: 0,
             fill: feature.properties.color,
         @canvas.add(object)
-
-  rotationToAngle: (rotation)->
-    # rotation 1.57 == 90 angle
-    return rotation / 1.57 * 90
