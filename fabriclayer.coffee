@@ -21,12 +21,19 @@ class FabricLayer extends ol.layer.Vector
 
     # initialize fabric
     if not window.canvas?
+      @map.on('moveend', =>
+        console.log('moveend')
+        addFabricObject(@)
+      )
+
       fabricInit(context, @, oneMeterPx)
 
     # 1px = 1m
 #    canvas.setZoom(oneMeterPx)
 #    canvas.zoomToPoint(new fabric.Point(canvas.width/2, canvas.height/2), oneMeterPx)
+#    renderFabricObject(@)
     canvas.renderAllOnTop()
+
 
 
 fabricInit = (context, layer, oneMeterPx)=>
@@ -91,27 +98,31 @@ fabricInit = (context, layer, oneMeterPx)=>
 
     return this;
 
-#  console.log layer.geojson
-#  console.log layer.map.getView()
-#  console.log layer.map.getView().getCenter()
-#  console.log layer.map.getView().getZoom()
+addFabricObject = (layer)->
+    # remove fabric all object
+    canvas.clear()
 
-  for feature in @geojson.features
-#    console.log feature
-#    console.log feature.properties
-    coordinates = feature.geometry.coordinates[0]
-    x1 = layer.map.getPixelFromCoordinate(coordinates[1])[0]
-    y1 = layer.map.getPixelFromCoordinate(coordinates[1])[1]
-    x2 = layer.map.getPixelFromCoordinate(coordinates[3])[0]
-    y2 = layer.map.getPixelFromCoordinate(coordinates[3])[1]
-    width  = x2-x1
-    height = y2-y1
-    object = new fabric.Rect({
-      left: x1+width/2,
-      top : y1+height/2,
-      fill: feature.properties.color,
-      width:  width,
-      height: height,
-      angle: 0
-    });
-    canvas.add(object)
+  #  console.log layer.geojson
+  #  console.log layer.map.getView()
+  #  console.log layer.map.getView().getCenter()
+  #  console.log layer.map.getView().getZoom()
+
+    for feature in layer.geojson.features
+  #    console.log feature
+  #    console.log feature.properties
+      coordinates = feature.geometry.coordinates[0]
+      x1 = layer.map.getPixelFromCoordinate(coordinates[1])[0]
+      y1 = layer.map.getPixelFromCoordinate(coordinates[1])[1]
+      x2 = layer.map.getPixelFromCoordinate(coordinates[3])[0]
+      y2 = layer.map.getPixelFromCoordinate(coordinates[3])[1]
+      width  = x2-x1
+      height = y2-y1
+      object = new fabric.Rect({
+        left: x1+width/2,
+        top : y1+height/2,
+        fill: feature.properties.color,
+        width:  width,
+        height: height,
+        angle: 0
+      });
+      canvas.add(object)
