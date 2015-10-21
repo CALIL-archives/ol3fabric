@@ -10,7 +10,7 @@ fabric.js on OpenLayers 3
 npm install browser-sync -g  
 npm install -g coffee-script
 
-coffee -w -b -m *.coffee  
+coffee -c -w -b -m \*.coffee  
 browser-sync start --server --files "\*.html,\*.js"
 
 
